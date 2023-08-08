@@ -1,0 +1,61 @@
+
+sd_n_ 前缀_n表示数据是由节点端更新
+在sd_n_nodes中存放api available的节点。sd_n_status中available变为false时，会删掉sd_n_nodes对应的条目
+sd_n_nodes的key模式为http(s)://host:port(/subpath)
+如果服务器只能开放一个服务端口，并且又要部署多节点，则运行反向代理，sd节点通过子路径（subpath）区分
+节点上线时会保证sd_n_nodes有记录，并更新sd_n_status相应的状态，会清掉sd_n_status的down_time
+节点下线未必能更新状态，应用要结合节点状态更新间隔、上次更新时间来判断是否可用
+节点模型信息先提供sd_models和sd_vaes，其他按需要增加
+capacity是节点处理能力的相对值，load表示节点负载
+
+
+
+sd_n_nodes(hash)
+    http://114.242.33.54:8092 -> 2023-08-07T07:23:42.639Z(last_update)
+
+
+sd_n_basic:http://114.242.33.54:8092/sd1(hash)
+    host -> 114.242.33.54
+    port -> 8092
+    https -> false
+    subpath -> sd1
+    web_ui -> true/false (false: api only)
+    api_auth -> 'user:pass'
+    status_interval -> 300 (seconds)
+    capacity -> 5
+    sd_models -> [...] (json)
+    sd_vaes -> [...] (json)
+
+
+sd_n_status:http://114.242.33.54:8092(hash)
+    available -> true/false (api available)
+    last_update -> 08-07T07:23:42.639Z
+    up_time -> 08-07T07:23:42.639Z
+    down_time -> 08-07T07:23:42.639Z
+    load -> 0.5 (0-1)
+
+
+sd_n_statistic:http://114.242.33.54:8092(hash)
+    rc_m_08-07T07:12 -> 10 (rc: request count)
+    rc_h_08-07T07:00 -> 100
+    rc_d_08-07T00:00 -> 1000
+
+
+
+
+JSON Schema
+
+sd_n_basic.sd_models
+
+[{'title': 'GuoFeng3.4.safetensors [a83e25fe5b]',
+  'model_name': 'GuoFeng3.4',
+  'sha256': 'a83e25fe5b70bad595fe4dd6733ee35f0e3ddf8ed4041ab360f9573556e8b3e6',
+  'config': None}]
+
+
+sd_n_basic.sd_vaes
+
+[{'model_name': 'klF8Anime2VAE_klF8Anime2VAE.ckpt'}]
+
+
+
