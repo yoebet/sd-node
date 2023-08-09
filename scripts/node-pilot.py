@@ -7,7 +7,7 @@ from modules import shared, script_callbacks, scripts
 from api import register_apis
 from runner import NodeRunner, get_node_runner
 
-log = logging.getLogger(__name__)
+log = logging.getLogger("sd")
 
 pilot_enabled = False
 
@@ -15,7 +15,6 @@ config_path = shared.cmd_opts.pilot_config_path
 if config_path is None:
     config_path = path.join(shared.cmd_opts.data_dir, 'pilot-config.yml')
 if path.exists(config_path):
-    print(config_path)
     pilot_enabled = True
     node_runner = get_node_runner()
     node_runner.start(config_path)

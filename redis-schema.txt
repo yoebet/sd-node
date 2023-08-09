@@ -10,32 +10,26 @@ capacity是节点处理能力的相对值，load表示节点负载
 
 
 
-sd_n_nodes(hash)
-    http://114.242.33.54:8092 -> 2023-08-07T07:23:42.639Z(last_update)
+sd_n_nodes (hash)
+    http://114.242.33.54:8092 -> 2023-08-07T07:23:42Z (last_update)
 
 
-sd_n_basic:http://114.242.33.54:8092/sd1(hash)
-    host -> 114.242.33.54
-    port -> 8092
-    https -> false
-    subpath -> sd1
-    web_ui -> true/false (false: api only)
+sd_n_status:http://114.242.33.54:8092/sd1 (hash)
     api_auth -> 'user:pass'
+    web_ui -> true/false (false: api only)
     status_interval -> 300 (seconds)
     capacity -> 5
     sd_models -> [...] (json)
     sd_vaes -> [...] (json)
 
-
-sd_n_status:http://114.242.33.54:8092(hash)
     available -> true/false (api available)
-    last_update -> 08-07T07:23:42.639Z
-    up_time -> 08-07T07:23:42.639Z
-    down_time -> 08-07T07:23:42.639Z
+    last_update -> 2023-08-07T07:23:42Z
+    up_time -> 2023-08-07T07:23:42Z
+    down_time ->
     load -> 0.5 (0-1)
 
 
-sd_n_statistic:http://114.242.33.54:8092(hash)
+sd_n_statistic:http://114.242.33.54:8092 (hash)
     rc_m_08-07T07:12 -> 10 (rc: request count)
     rc_h_08-07T07:00 -> 100
     rc_d_08-07T00:00 -> 1000

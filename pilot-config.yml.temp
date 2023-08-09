@@ -1,0 +1,21 @@
+centric_redis:
+  #- label: 'prod'
+  #  host: ''
+  #  port: 6379
+  #  db: 0
+  #  username:
+  #  password:
+  - label: 'dev'
+    host: 'localhost'
+    port: 6379
+    db: 1
+#    username:
+#    password:
+sd_node:
+  public_access:
+    # https: true
+    host: 'localhost'
+    port: 8088
+  capacity: 5
+  status_interval: 30
+#  send_statistic: false
