@@ -4,7 +4,7 @@ import logging
 import time
 from os import path
 import json
-from omegaconf import OmegaConf
+from omegaconf import OmegaConf, DictConfig
 from pydantic import BaseModel
 from datetime import datetime, timedelta
 from typing import Any, Callable, Union, Optional, List, Dict, Tuple
@@ -47,9 +47,9 @@ class NodeRunner:
             raise Exception("NodeRunner instance already exists")
         NodeRunner.instance = self
         self.config_path = None
-        self.status = 'not-start'
-        self.conf = None
-        self.nodeStatus = NodeStatus(public_base_url='')
+        self.state = 'not-start'
+        self.conf: Optional[DictConfig] = None
+        self.node_status = NodeStatus(public_base_url='')
         self.redis_clis: List[redis.Redis] = []
         self.basic_status_changed = True
         self.models_changed = True
@@ -65,7 +65,7 @@ class NodeRunner:
         sd_mdoels = [{"title": x.title, "model_name": x.model_name, "sha256": x.sha256} for x in
                      checkpoints_list.values()]
         sd_vaes = [{"model_name": x} for x in vae_dict.keys()]
-        status = self.nodeStatus
+        status = self.node_status
         status.sd_models = sd_mdoels
         status.sd_vaes = sd_vaes
 
@@ -103,7 +103,7 @@ class NodeRunner:
             except Exception as e:
                 log.error(e)
 
-        status = self.nodeStatus
+        status = self.node_status
         status.public_base_url = public_base_url
         status.capacity = node_info.capacity
         status.status_interval = node_info.status_interval
@@ -115,21 +115,30 @@ class NodeRunner:
 
         self.set_models()
 
+    def reload_config(self):
+        # last = self.conf
+        self.load_config()
+
+    def get_config_yaml(self):
+        if not self.conf:
+            return ''
+        return OmegaConf.to_yaml(self.conf)
+
     def run(self):
-        if self.status == 'not-start':
+        if self.state == 'not-start':
             time.sleep(self.first_delay)
             self.load_config()
-        self.status = 'running'
+        self.state = 'running'
         while True:
             try:
                 self.update()
             except Exception as e:
                 log.error(e)
-            status = self.nodeStatus
+            status = self.node_status
             time.sleep(status.status_interval)
 
     def update(self):
-        status = self.nodeStatus
+        status = self.node_status
         status.last_update = datetime.utcnow().isoformat(timespec='milliseconds') + 'Z'
         # print(status)
 

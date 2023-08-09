@@ -4,8 +4,8 @@ from os import path
 import gradio as gr
 from modules import shared, script_callbacks, scripts
 
-from api import register_apis
-from runner import NodeRunner, get_node_runner
+from node_pilot.api import register_apis
+from node_pilot.runner import NodeRunner, get_node_runner
 
 log = logging.getLogger("sd")
 
@@ -14,9 +14,9 @@ pilot_enabled = False
 config_path = shared.cmd_opts.pilot_config_path
 if config_path is None:
     config_path = path.join(shared.cmd_opts.data_dir, 'pilot-config.yml')
+node_runner = get_node_runner()
 if path.exists(config_path):
     pilot_enabled = True
-    node_runner = get_node_runner()
     node_runner.start(config_path)
 
 
@@ -57,7 +57,7 @@ class NodePilot(scripts.Script):
 
 
 def on_app_started(block: gr.Blocks, app):
-    register_apis(app)
+    register_apis(app, node_runner)
 
 
 def on_ui_settings():
