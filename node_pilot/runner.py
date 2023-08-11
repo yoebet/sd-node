@@ -70,7 +70,7 @@ class NodeRunner:
         self.conf = OmegaConf.load(self.config_path)
         node_info = self.conf.sd_node
         public_access = node_info.public_access
-        public_https = public_access.get('public_https', False)
+        public_https = public_access.get('https', False)
         public_host = public_access.host
         public_port = public_access.port
         if public_https:
