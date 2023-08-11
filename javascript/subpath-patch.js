@@ -1,13 +1,13 @@
-ofetch = window.fetch
-
-window.fetch = function (...args) {
-    if (typeof args[0] == 'string') {
-        if (args[0].startsWith('/agent-scheduler/')) {
-            args[0] = args[0].substring(1)
-        }
-    }
-    return ofetch(args)
-}
+// window.ofetch = window.fetch
+//
+// window.fetch = function (...args) {
+//     if (typeof args[0] === 'string') {
+//         if (args[0].startsWith('/agent-scheduler/')) {
+//             args[0] = args[0].substring(1)
+//         }
+//     }
+//     return ofetch(args)
+// }
 
 
 setTimeout(function () {
