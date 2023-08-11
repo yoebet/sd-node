@@ -1,7 +1,6 @@
 ofetch = window.fetch
 
-window.fetch = function () {
-    args = [...arguments]
+window.fetch = function (...args) {
     if (typeof args[0] == 'string') {
         if (args[0].startsWith('/agent-scheduler/')) {
             args[0] = args[0].substring(1)
@@ -12,8 +11,8 @@ window.fetch = function () {
 
 
 setTimeout(function () {
-    docs_link = document.querySelector('#footer > div:nth-child(1) > a:nth-child(1)')
-    if (docs_link && docs_link.getAttribute('href') === '/docs') {
-        docs_link.setAttribute('href', 'docs')
+    dl = document.querySelector('#footer > div:nth-child(1) > a:nth-child(1)')
+    if (dl && dl.getAttribute('href') === '/docs') {
+        dl.setAttribute('href', 'docs')
     }
 }, 3000)
