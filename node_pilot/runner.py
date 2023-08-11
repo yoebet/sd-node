@@ -169,12 +169,12 @@ class NodeRunner:
 
         redis_status_key = f'{REDIS_KEYS["node_prefix"]}:{status.public_base_url}'
         ank = REDIS_KEYS['all_nodes']
-        exp_seconds = status.status_interval + 30
+        # exp_seconds = status.status_interval + 30
         for cli in self.redis_clis:
             try:
                 if status.available:
                     cli.hset(ank, status.public_base_url, status.last_update)
-                    cli.expire(ank, exp_seconds)
+                    # cli.expire(ank, exp_seconds)
                 else:
                     cli.hdel(ank, status.public_base_url)
                 cli.hset(redis_status_key, mapping=mapping)
