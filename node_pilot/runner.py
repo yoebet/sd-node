@@ -1,19 +1,16 @@
-import json
 import threading
 import logging
 import time
-from os import path
 import json
 from omegaconf import OmegaConf, DictConfig
 from pydantic import BaseModel
-from datetime import datetime, timedelta
-from typing import Any, Callable, Union, Optional, List, Dict, Tuple
+from datetime import datetime
+from typing import Any, Optional, List
 import redis
 
-from modules import shared, script_callbacks, scripts
-from modules.sd_models import checkpoints_list, unload_model_weights, reload_model_weights, checkpoint_aliases
+from modules import shared
+from modules.sd_models import checkpoints_list
 from modules.sd_vae import vae_dict
-from modules.sd_models_config import find_checkpoint_config_near_filename
 
 log = logging.getLogger("sd")
 
@@ -28,7 +25,7 @@ class NodeStatus(BaseModel):
     public_base_url: str
     web_ui: bool = True
     api_auth: Optional[str] = None  # user:pass
-    status_interval: int = 5  # update interval seconds
+    status_interval: int = 300  # update interval seconds
     capacity: float = 1.0
     sd_models: List[Any] = []
     sd_vaes: List[Any] = []
@@ -91,14 +88,13 @@ class NodeRunner:
 
         print('public_base_url', public_base_url)
 
-        redis_configs = self.conf.centric_redis
+        redis_envs = self.conf.redis_envs
         self.redis_clis: List[redis.Redis] = []
-        for rc in redis_configs:
+        for rc in redis_envs:
             try:
                 cli = redis.Redis(host=rc.host, port=rc.port, db=rc.db,
                                   username=rc.get('username', None),
                                   password=rc.get('password', None))
-                # cli.set('cc-' + rc.label, rc.label)
                 self.redis_clis.append(cli)
             except Exception as e:
                 log.error(e)
@@ -172,12 +168,19 @@ class NodeRunner:
         # print(mapping)
 
         redis_status_key = f'{REDIS_KEYS["node_prefix"]}:{status.public_base_url}'
+        ank = REDIS_KEYS['all_nodes']
+        exp_seconds = status.status_interval + 30
         for cli in self.redis_clis:
-            if status.available:
-                cli.hset(REDIS_KEYS['all_nodes'], status.public_base_url, status.last_update)
-            else:
-                cli.hdel(REDIS_KEYS['all_nodes'], status.public_base_url)
-            cli.hset(redis_status_key, mapping=mapping)
+            try:
+                if status.available:
+                    cli.hset(ank, status.public_base_url, status.last_update)
+                    cli.expire(ank, exp_seconds)
+                else:
+                    cli.hdel(ank, status.public_base_url)
+                cli.hset(redis_status_key, mapping=mapping)
+                # cli.expire(redis_status_key, exp_seconds)
+            except Exception as e:
+                log.error(e)
 
         self.basic_status_changed = False
         self.models_changed = False

@@ -1,4 +1,4 @@
-centric_redis:
+redis_envs:
   #- label: 'prod'
   #  host: ''
   #  port: 6379
@@ -17,5 +17,5 @@ sd_node:
     host: 'localhost'
     port: 8088
   capacity: 5
-  status_interval: 30
+  status_interval: 300
 #  send_statistic: false
